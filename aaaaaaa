@@ -1,0 +1,31 @@
+private void frmReservations_Load(object sender, EventArgs e)
+{
+    // Check if the user is a customer
+    if (currentUserRole == "Customer") 
+    {
+        // Filter the reservations to show only the logged-in customer's data
+        string query = "SELECT * FROM Reservations WHERE CustomerID = @CustomerID";
+        
+        // Fetch data from the database and bind it to the DataGridView
+        SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection);
+        dataAdapter.SelectCommand.Parameters.AddWithValue("@CustomerID", currentUserID);
+        DataTable dt = new DataTable();
+        dataAdapter.Fill(dt);
+        
+        dgvReservations.DataSource = dt;
+
+        // Make the DataGridView read-only for the customer
+        dgvReservations.ReadOnly = true;
+    }
+    else
+    {
+        // Load all reservations if the user is not a customer (e.g., admin)
+        string query = "SELECT * FROM Reservations";
+        
+        SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection);
+        DataTable dt = new DataTable();
+        dataAdapter.Fill(dt);
+        
+        dgvReservations.DataSource = dt;
+    }
+}
